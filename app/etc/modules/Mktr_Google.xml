@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Mktr_Google>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Mktr_Google>
+    </modules>
+</config>

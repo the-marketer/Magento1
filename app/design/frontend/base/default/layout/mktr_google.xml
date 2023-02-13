@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+        <reference name="head">
+            <block type="mktr_google/loader" name="mktr_google.loader" />
+        </reference>
+        <reference name="after_body_start">
+            <block type="mktr_google/bod" name="mktr_google.bod" />
+        </reference>
+    </default>
+</layout>

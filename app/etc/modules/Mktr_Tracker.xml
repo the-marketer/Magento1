@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category    TheMarketer Plugin
+ * @package     TheMarketer_Plugin
+ * @author      EAX Lex <b.alex@eax.ro>
+ * @copyright   Copyright (c) Eax Lex
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+*/
+-->
+<config>
+    <modules>
+        <Mktr_Tracker>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Mktr_Tracker>
+    </modules>
+</config>

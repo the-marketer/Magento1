@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+        <reference name="head">
+            <block type="mktr_tracker/loader" name="mktr_tracker.loader"/>
+        </reference>
+    </default>
+</layout>
