@@ -7,7 +7,8 @@
 class Mktr_Tracker_Model_Pages_SaveOrder
 {
     private static $ins = array(
-        "Help" => null
+        "Help" => null,
+        "Subscriber" => null
     );
     /** TODO: Magento 1
      * @noinspection PhpUndefinedClassInspection

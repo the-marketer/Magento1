@@ -81,7 +81,7 @@ class Mktr_Tracker_Model_Pages_Category
 
         $newList = array(
             "name" => $category->getName(),
-            "url" => self::$url. $category->getUrlPath().'.html',
+            "url" => self::$url. $category->getUrlPath(), //.'.html',
             'id'=> $category->getId(),
             "hierarchy" => self::hierarchy($category),
             "image_url" => $category->getImageUrl()

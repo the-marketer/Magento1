@@ -8,7 +8,8 @@ class Mktr_Tracker_Model_Pages_Orders
 {
     private static $ins = array(
         "Help" => null,
-        "Config" => null
+        "Config" => null,
+        "Subscriber" => null
     );
 
     private static $error = null;
