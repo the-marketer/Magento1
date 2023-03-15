@@ -192,16 +192,18 @@ class Mktr_Tracker_Model_Pages_Feed
         $MasterQty = (int) $product->getStockItem()->getQty();
 
         if($product->getTypeId() == 'configurable') {
-
+            
             /** TODO: Magento 1 */
-            $variants = self::getHelp()->getProductType->getUsedProducts(null, $product);
-            foreach ($variants as $p) {
+            $variants = $product->getTypeInstance()->getUsedProductIds();
 
+            foreach ($variants as $pID) {
+                $p = Mage::getModel('catalog/product')->load($pID);
+                
                 $vPrice = $p->getPrice();
-                if (!empty((float)$vPrice)) {
+                $vFinalPrice = $p->getFinalPrice();
+                $vSalePrice = empty((float)$vFinalPrice) ? $product->getFinalPrice() : $vFinalPrice;
 
-                    $vFinalPrice = $product->getFinalPrice();
-                    $vSalePrice = empty((float)$vFinalPrice) ? $vPrice : $vFinalPrice;
+                if (!empty((float)$vPrice) || !empty((float)$vSalePrice)) {
                     $attribute = [
                         'color' => null,
                         'size' => null
@@ -225,13 +227,13 @@ class Mktr_Tracker_Model_Pages_Feed
 
                     /** TODO: Magento 1 */
                     /** @noinspection DuplicatedCode */
-                    $qty = $product->getStockItem()->getQty();
+                    $qty = $p->getStockItem()->getQty();
                     $MasterQty += (int) $qty;
 
                     /** @noinspection DuplicatedCode */
                     if ($qty < 0) {
                         $stock = self::getHelp()->getConfig->getDefaultStock();
-                    } else if ($p->isInStock() && $qty == 0) {
+                    } else if ($p->isInStock() && (int) $qty == 0) {
                         $stock = 2;
                     } else if ($p->isInStock()){
                         $stock = 1;
@@ -248,7 +250,7 @@ class Mktr_Tracker_Model_Pages_Feed
                         'size' => empty($attribute['size']) ? null : ['@cdata' => $attribute['size']],
                         'color' => empty($attribute['color']) ? null : ['@cdata' => $attribute['color']],
                         'availability' => $stock,
-                        'stock' => $qty
+                        'stock' => (int) $qty
                     ];
 
                     if (empty($v['size'])) {
