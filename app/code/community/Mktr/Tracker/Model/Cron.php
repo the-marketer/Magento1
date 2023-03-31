@@ -1,9 +1,12 @@
 <?php
-
 /**
- * @copyright   © EAX LEX SRL. All rights reserved.
+ * @copyright   Copyright (c) 2023 TheMarketer.com
+ * @project     TheMarketer.com
+ * @website     https://themarketer.com/
+ * @author      Alexandru Buzica (EAX LEX S.R.L.) <b.alex@eax.ro>
  * @license     http://opensource.org/licenses/osl-3.0.php - Open Software License (OSL 3.0)
- **/
+ * @docs        https://themarketer.com/resources/api
+ */
 
 class Mktr_Tracker_Model_Cron
 {
@@ -40,6 +43,7 @@ class Mktr_Tracker_Model_Cron
         foreach (self::getStores() as $k)
         {
             if ($k->getId() != 0) {
+                Mage::app()->setCurrentStore($k->getId());
                 self::getHelp()->getConfig->setScopeCode($k->getId());
                 self::getHelp()->getFunc->setStoreId($k->getId());
 

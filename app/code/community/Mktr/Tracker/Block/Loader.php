@@ -1,8 +1,12 @@
 <?php
 /**
- * @copyright   © EAX LEX SRL. All rights reserved.
+ * @copyright   Copyright (c) 2023 TheMarketer.com
+ * @project     TheMarketer.com
+ * @website     https://themarketer.com/
+ * @author      Alexandru Buzica (EAX LEX S.R.L.) <b.alex@eax.ro>
  * @license     http://opensource.org/licenses/osl-3.0.php - Open Software License (OSL 3.0)
- **/
+ * @docs        https://themarketer.com/resources/api
+ */
 
 class Mktr_Tracker_Block_Loader extends Mage_Core_Block_Template
 {
@@ -81,7 +85,7 @@ class Mktr_Tracker_Block_Loader extends Mage_Core_Block_Template
 
         foreach (self::getHelp()->getConfig->getEventsObs() as $event=>$Name)
         {
-            $fName = "get".vsprintf(self::getHelp()->getSessionName, array($event));
+            $fName = "get".self::getHelp()->getSessionName.$event;
 
             $eventData = self::getHelp()->getSession->{$fName}();
             if ($eventData)
@@ -90,7 +94,7 @@ class Mktr_Tracker_Block_Loader extends Mage_Core_Block_Template
                 if ($Name[0]) {
                     $loadJS[$event] = true;
                 }else {
-                    $uName = "uns".vsprintf(self::getHelp()->getSessionName, array($event));
+                    $uName = "uns".self::getHelp()->getSessionName.$event;
                     self::getHelp()->getSession->{$uName}();
                 }
             }

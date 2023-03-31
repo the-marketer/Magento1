@@ -1,8 +1,12 @@
 <?php
 /**
- * @copyright   © EAX LEX SRL. All rights reserved.
+ * @copyright   Copyright (c) 2023 TheMarketer.com
+ * @project     TheMarketer.com
+ * @website     https://themarketer.com/
+ * @author      Alexandru Buzica (EAX LEX S.R.L.) <b.alex@eax.ro>
  * @license     http://opensource.org/licenses/osl-3.0.php - Open Software License (OSL 3.0)
- **/
+ * @docs        https://themarketer.com/resources/api
+ */
 
 class Mktr_Tracker_Model_Pages_Feed
 {
@@ -100,25 +104,45 @@ class Mktr_Tracker_Model_Pages_Feed
     public static function getProductById($id)
     {
         /** TODO Magento 1 BigDump */
-        return self::buildProduct(Mage::getModel('catalog/product')->load($id));
+        try {
+            $product = Mage::getModel('catalog/product')->load($id, false, self::getHelp()->getFunc->getStoreId(), true);
+            return self::buildProduct($product);
+        } catch (Exception $e){
+            return false;
+        }
     }
 
     /** @noinspection PhpUnused */
     public static function getProductBySku($sku)
     {
         /** TODO Magento 1 BigDump */
-        return self::buildProduct(Mage::getModel('catalog/product')->get($sku));
+        try {
+            $product = Mage::getModel('catalog/product')->get($sku, false, self::getHelp()->getFunc->getStoreId(), true);
+            return self::buildProduct($product);
+        } catch (Exception $e){
+            return false;
+        }
     }
 
     public static function freshData()
     {
         $or = array();
 
+        $stop = false;
+        
+        self::$params = self::getHelp()->getRequest->getParams();
+
         self::$attr['brand'] = self::getHelp()->getConfig->getBrandAttribute();
         self::$attr['color'] = self::getHelp()->getConfig->getColorAttribute();
         self::$attr['size'] = self::getHelp()->getConfig->getSizeAttribute();
 
-        self::$params['page'] = (int) (isset(self::$params['page']) ? self::$params['page'] : 1);
+        if (isset(self::$params['page'])) {
+            $stop = true;
+            self::$params['page'] = (int) self::$params['page'];
+        } else {
+            self::$params['page'] = 1;
+        }
+
         self::$params['limit'] = (int) (isset(self::$params['limit']) ? self::$params['limit'] : 50);
 
         self::$data['products'] = self::getHelp()->getProductCol
@@ -132,7 +156,7 @@ class Mktr_Tracker_Model_Pages_Feed
             ->addAttributeToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
 
         /** @noinspection DuplicatedCode */
-        $pages = self::$data['products']->getLastPageNumber();
+        $pages = $stop ? self::$params['page'] : self::$data['products']->getLastPageNumber();
         try {
             do {
                 self::$data['products']->setCurPage(self::$params['page'])->load();

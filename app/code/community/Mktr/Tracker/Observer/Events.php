@@ -1,8 +1,12 @@
 <?php
 /**
- * @copyright   © EAX LEX SRL. All rights reserved.
+ * @copyright   Copyright (c) 2023 TheMarketer.com
+ * @project     TheMarketer.com
+ * @website     https://themarketer.com/
+ * @author      Alexandru Buzica (EAX LEX S.R.L.) <b.alex@eax.ro>
  * @license     http://opensource.org/licenses/osl-3.0.php - Open Software License (OSL 3.0)
- **/
+ * @docs        https://themarketer.com/resources/api
+ */
 
 class Mktr_Tracker_Observer_Events
 {
@@ -21,7 +25,7 @@ class Mktr_Tracker_Observer_Events
         "sales_order_place_after" => "saveOrder",
         "multishipping_checkout_controller_success_action" => "saveOrder",
         "model_save_after" => "emailAndPhone",
-        "customer_register_success" => "RegisterOrLogIn",
+        "customer_register_success" => "Register",
         "customer_login" => "RegisterOrLogIn",
         /* "review_controller_product_init_after" => "Review", */
         "admin_system_config_changed_section_mktr_tracker" => "SaveButton",
@@ -227,6 +231,8 @@ class Mktr_Tracker_Observer_Events
         /** @noinspection PhpUndefinedClassInspection */
         if ($object instanceof Mage_Newsletter_Model_Subscriber) {
 
+            $tApi = self::getHelp()->getSessionName."Api";
+            self::getHelp()->getSession->{"set".$tApi}([ 'Sub' => true ]);
 
 
             if ($object->getEmail() === null) {
@@ -255,6 +261,28 @@ class Mktr_Tracker_Observer_Events
 
                 self::MktrSessionSet();
             }
+        }
+    }
+    /** @noinspection PhpUnused */
+    public function Register()
+    {
+        $tApi = self::getHelp()->getSessionName."Api";
+        
+        self::getHelp()->getSession->{"set".$tApi}([ 'Sub' => Mage::app()->getRequest()->getParam('is_subscribed') ]);
+        
+        $customer = self::$observer->getCustomer();
+
+        $this->EmailSet($customer);
+
+        if ($customer->getDefaultShipping()) {
+            self::$eventName = "setPhone";
+            $address = self::getHelp()->getCustomerAddress->load($customer->getDefaultShipping());
+
+            self::$eventData = array(
+                'phone' => self::getHelp()->getFunc->validateTelephone($address->getTelephone())
+            );
+
+            self::MktrSessionSet();
         }
     }
 
@@ -330,7 +358,7 @@ class Mktr_Tracker_Observer_Events
     /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection */
     private static function MktrSessionSet()
     {
-        $fName = "set".vsprintf(self::getHelp()->getSessionName, self::$eventName);
+        $fName = "set".self::getHelp()->getSessionName.self::$eventName;
 
         self::getHelp()->getSession->{$fName}(self::$eventData);
         return self::$eventAction;

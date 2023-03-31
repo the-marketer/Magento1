@@ -1,8 +1,12 @@
 <?php
 /**
- * @copyright   © EAX LEX SRL. All rights reserved.
+ * @copyright   Copyright (c) 2023 TheMarketer.com
+ * @project     TheMarketer.com
+ * @website     https://themarketer.com/
+ * @author      Alexandru Buzica (EAX LEX S.R.L.) <b.alex@eax.ro>
  * @license     http://opensource.org/licenses/osl-3.0.php - Open Software License (OSL 3.0)
- **/
+ * @docs        https://themarketer.com/resources/api
+ */
 
 class Mktr_Tracker_Model_Func
 {
@@ -73,10 +77,34 @@ class Mktr_Tracker_Model_Func
         self::$storeID = $id;
     }
 
+    public static function getWebsiteId($store)
+    {
+        try {
+            return Mage::app()->getWebsite($store)->getDefaultGroup()->getDefaultStoreId();
+        } catch(Exception $e) {
+            return false;
+        }
+    }
+
     public static function getStoreId()
     {
         if (self::$storeID == null) {
-            self::$storeID = self::getHelp()->getStore->getStoreId();
+            /* TODO PAGE LIMIT */
+            $store = self::getHelp()->getRequest->getParam('store', false);
+            
+            if ($store !== false) {
+                try {
+                    $store = Mage::app()->getStore($store)->getId();
+                } catch(Exception $e) {
+                    $store = self::getWebsiteId($store);
+                }
+            }
+            if ($store !== false) {
+                self::$storeID = $store;
+                Mage::app()->setCurrentStore($store);
+            } else {
+                self::$storeID = self::getHelp()->getStore->getStoreId();
+            }
         }
         return self::$storeID;
     }

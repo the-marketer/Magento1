@@ -1,8 +1,12 @@
 <?php
 /**
- * @copyright   © EAX LEX SRL. All rights reserved.
+ * @copyright   Copyright (c) 2023 TheMarketer.com
+ * @project     TheMarketer.com
+ * @website     https://themarketer.com/
+ * @author      Alexandru Buzica (EAX LEX S.R.L.) <b.alex@eax.ro>
  * @license     http://opensource.org/licenses/osl-3.0.php - Open Software License (OSL 3.0)
- **/
+ * @docs        https://themarketer.com/resources/api
+ */
 
 class Mktr_Tracker_Model_Pages_SaveOrder
 {
@@ -34,7 +38,7 @@ class Mktr_Tracker_Model_Pages_SaveOrder
     {
         $result = self::getHelp()->getPageRaw;
         $result->setHeader('Content-type', 'application/javascript; charset=utf-8;', 1);
-        $fName = vsprintf(self::getHelp()->getSessionName, array('saveOrder'));
+        $fName = self::getHelp()->getSessionName.'saveOrder';
         $sOrder = self::getHelp()->getSession->{"get".$fName}();
 
         if ($sOrder !== null) {
@@ -46,7 +50,7 @@ class Mktr_Tracker_Model_Pages_SaveOrder
             {
                 if (!empty($sOrder["email_address"]))
                 {
-                    $fNameS = "set".vsprintf(self::getHelp()->getSessionName, array('setEmail'));
+                    $fNameS = "set".self::getHelp()->getSessionName.'setEmail';
                     self::getHelp()->getSession->{$fNameS}(
                         self::getHelp()->getManager->schemaValidate(
                             $sOrder, self::getHelp()->getManager->getEventsSchema('setEmail')
@@ -56,7 +60,7 @@ class Mktr_Tracker_Model_Pages_SaveOrder
 
                 if (!empty($sOrder["phone"]))
                 {
-                    $fNameS = "set".vsprintf(self::getHelp()->getSessionName, array('setPhone'));
+                    $fNameS = "set".self::getHelp()->getSessionName.'setPhone';
                     self::getHelp()->getSession->{$fNameS}(array('phone' => $sOrder["phone"]));
                 }
             }
