@@ -71,8 +71,9 @@ class Mktr_Tracker_Block_Loader extends Mage_Core_Block_Template
         }
 
         $lines = array();
+        $key = self::getHelp()->getConfig->getKey();
 
-        $lines[] = vsprintf(self::getHelp()->getConfig->getLoader(), self::getHelp()->getConfig->getKey());
+        $lines[] = vsprintf(self::getHelp()->getConfig->getLoader(), array( $key ));
 
         $loadJS = array();
 
