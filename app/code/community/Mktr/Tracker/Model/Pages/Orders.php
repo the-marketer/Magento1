@@ -73,41 +73,47 @@ class Mktr_Tracker_Model_Pages_Orders
         foreach ($saveOrder->getAllVisibleItems() as $item) {
             $pro = self::getHelp()->getProductRepo->load($item->getProductId());
 
-            $pro->setStoreId(self::getHelp()->getFunc->getStoreId());
+            if ($pro->getId()) {
+                $pro->setStoreId(self::getHelp()->getFunc->getStoreId());
 
-            /** TODO: Magento 2 - self::getHelp()->getTax->getTaxPrice  - Magento 1 - self::getHelp()->getTax->getPrice */
-            $price = self::getHelp()->getFunc->digit2(
-                self::getHelp()->getTax->getPrice($item, $item->getPrice(), true)
-            );
-
-            $sale_price = $item->getFinalPrice() > 0 ? self::getHelp()->getFunc->digit2(
-                self::getHelp()->getTax->getPrice($item, $item->getFinalPrice(), true)
-            ) : $price;
-
-            $ct = self::getHelp()->getManager->buildMultiCategory($pro->getCategoryIds());
-
-            $brand = '';
-            foreach (self::$brandAttribute as $v)
-            {
-                $brand = $pro->getAttributeText($v);
-                if (!empty($brand)) {
-                    break;
+                /** TODO: Magento 2 - self::getHelp()->getTax->getTaxPrice  - Magento 1 - self::getHelp()->getTax->getPrice */
+                $price = self::getHelp()->getFunc->digit2(
+                    self::getHelp()->getTax->getPrice($item, $item->getPrice(), true)
+                );
+    
+                $sale_price = $item->getFinalPrice() > 0 ? self::getHelp()->getFunc->digit2(
+                    self::getHelp()->getTax->getPrice($item, $item->getFinalPrice(), true)
+                ) : $price;
+    
+                $ct = self::getHelp()->getManager->buildMultiCategory($pro->getCategoryIds());
+    
+                $brand = '';
+                foreach (self::$brandAttribute as $v)
+                {
+                    $brand = $pro->getAttributeText($v);
+                    if (!empty($brand)) {
+                        break;
+                    }
                 }
+                
+                if (empty($brand)) {
+                    $brand = "N/A";
+                }
+    
+                $products[] = array(
+                    'product_id' => $item->getProductId(),
+                    'name' => $item->getName(),
+                    'url' => $pro->getProductUrl(),
+                    'main_image' => self::getProductImage($pro),
+                    'category' => $ct,
+                    'brand' => $brand,
+                    'price' => $price,
+                    'sale_price' => $sale_price,
+                    'quantity' => (int) $item->getQtyOrdered(),
+                    'variation_id' => $pro->getId(),
+                    'variation_sku' => $item->getSku()
+                );
             }
-
-            $products[] = array(
-                'product_id' => $item->getProductId(),
-                'name' => $item->getName(),
-                'url' => $pro->getProductUrl(),
-                'main_image' => self::getProductImage($pro),
-                'category' => $ct,
-                'brand' => $brand,
-                'price' => $price,
-                'sale_price' => $sale_price,
-                'quantity' => (int) $item->getQtyOrdered(),
-                'variation_id' => $pro->getId(),
-                'variation_sku' => $item->getSku()
-            );
         }
 
         $refund = self::getHelp()->getFunc->digit2($saveOrder->getTotalRefunded());
@@ -115,7 +121,7 @@ class Mktr_Tracker_Model_Pages_Orders
         $coupon = $saveOrder->getCouponCode();
         $coupon = empty($coupon) ? "" : $coupon;
 
-        return array(
+        return empty($products) ? null : array(
             "order_no" => $saveOrder->getIncrementId(),
             "order_status" => $saveOrder->getState(),
             "refund_value" => $refund,
@@ -202,7 +208,10 @@ class Mktr_Tracker_Model_Pages_Orders
 
             if (self::$params['page'] == self::$data['Orders']->getCurPage()) {
                 foreach (self::$data['Orders'] as $orders) {
-                    $or[] = self::getOrderInfo($orders);
+                    $o = self::getOrderInfo($orders);
+                    if ($o !== null) {
+                        $or[] = $o;
+                    }
                 }
             }
 
