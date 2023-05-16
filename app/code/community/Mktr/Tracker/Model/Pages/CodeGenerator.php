@@ -39,6 +39,10 @@ class Mktr_Tracker_Model_Pages_CodeGenerator
     /** @noinspection PhpUnused */
     public function indexAction()
     {
+        if (!self::getHelp()->getRequest->getParam("mime-type")) {
+            self::getHelp()->getRequest->setParam("mime-type", 'json');
+        }
+        
         self::$error =  self::getHelp()->getFunc->isParamValid(array(
             'key' => 'Required|Key',
             'expiration_date' => 'DateCheck',
