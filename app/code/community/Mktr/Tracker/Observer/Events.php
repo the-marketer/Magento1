@@ -106,7 +106,7 @@ class Mktr_Tracker_Observer_Events
             ->getQuoteItem()
             ->getOptionByCode('simple_product');
 
-        if ($variant)
+        if ($variant == null)
         {
             $variant = self::$observer->getQuoteItem();
         }
