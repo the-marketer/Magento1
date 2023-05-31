@@ -107,7 +107,33 @@ class Mktr_Tracker_Block_Loader extends Mage_Core_Block_Template
             $lines[] = '(function(){ let add = document.createElement("script"); add.async = true; add.src = "'.$baseURL.'mktr/api/'.$k.'"; let s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(add,s); })();';
         }
 
-        $lines[] = 'window.MktrDebug = function () { if (typeof dataLayer != undefined) { for (let i of dataLayer) { console.log("Mktr","Google",i); } } };';
+        $lines[] = 'window.mktr = window.mktr || {};
+window.mktr.debug = function () { if (typeof dataLayer != "undefined") { for (let i of dataLayer) { console.log("Mktr","Google",i); } } };
+window.mktr.load = function () {
+    (function(){ let add = document.createElement("script");add.async = true; add.src = "'.$baseURL.'mktr/api/LoadEvents";
+    let s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(add,s); })();
+};
+
+if (typeof setLocation != "undefined") {
+    window.mktr.originalSetLocation = setLocation;
+    setLocation = function(url){
+        let ret = window.mktr.originalSetLocation.call(this, url);
+        if (url.search("checkout/cart/add") != -1 || url.search("checkout/cart/delete") != -1) {
+            setTimeout(window.mktr.load, 1000);
+        }
+        return ret;
+    };
+}
+
+if (typeof productAddToCartForm != "undefined") {
+    window.mktr.originalSubmit = productAddToCartForm.submit;
+    productAddToCartForm.submit = function(element){
+        let ret = window.mktr.originalSubmit.call(this, element);
+        setTimeout(window.mktr.load, 1000);
+        return ret;
+    };
+}
+';
 
         // $lines[] = 'console.log("Mktr","ActionName","'.self::actionName().'");';
 
