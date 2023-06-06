@@ -233,18 +233,24 @@ class Mktr_Tracker_Model_Pages_Feed
                         'size' => null
                     ];
 
-                    foreach (self::$attr['color'] as $v)
-                    {
-                        $attribute['color'] = $p->getAttributeText($v);
-                        if (!empty($attribute['color'])) {
-                            break;
-                        }
-                    }
+                    $ls = [];
+                    foreach ($p->getAttributes() as $vv) {
 
-                    foreach (self::$attr['size'] as $v)
-                    {
-                        $attribute['size'] = $p->getAttributeText($v);
-                        if (!empty($attribute['size'])) {
+                        if (empty($attribute['size']) && (in_array($vv->getAttributeCode() , self::$attr['color']) || in_array($vv->getFrontendLabel() , self::$attr['color']))) {
+                            $attribute['color'] = $p->getAttributeText($vv->getAttributeCode());
+                            if (!empty($attribute['color'])) {
+                                break;
+                            }
+                        }
+
+                        if (empty($attribute['size']) && (in_array($vv->getAttributeCode() , self::$attr['size']) || in_array($vv->getFrontendLabel() , self::$attr['size']))) {
+                            $attribute['size'] = $p->getAttributeText($vv->getAttributeCode());
+                            if (!empty($attribute['size'])) {
+                                break;
+                            }
+                        }
+
+                        if (!empty($attribute['size']) && !empty($attribute['color'])) {
                             break;
                         }
                     }
