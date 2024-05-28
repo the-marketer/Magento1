@@ -19,6 +19,7 @@ class Mktr_Tracker_Block_Loader extends Mage_Core_Block_Template
         "checkout_onepage_index" => "__sm__initiate_checkout",
         /* "checkout_index_index" => "__sm__initiate_checkout", */
         "catalogsearch_result_index" => "__sm__search"
+        /* checkout_onepage_success */
     );
 
     private static $ins = array(

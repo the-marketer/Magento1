@@ -235,17 +235,23 @@ class Mktr_Tracker_Model_Pages_Feed
 
                     foreach (self::$attr['color'] as $v)
                     {
-                        $attribute['color'] = $p->getAttributeText($v);
-                        if (!empty($attribute['color'])) {
-                            break;
+                        $att = $p->getResource()->getAttribute($v);
+                        if ($att) {
+                            $attribute['color'] = $att->getSource()->getOptionText($p->getData($v));
+                            if (!empty($attribute['color'])) {
+                                break;
+                            }
                         }
                     }
 
                     foreach (self::$attr['size'] as $v)
                     {
-                        $attribute['size'] = $p->getAttributeText($v);
-                        if (!empty($attribute['size'])) {
-                            break;
+                        $att = $p->getResource()->getAttribute($v);
+                        if ($att) {
+                            $attribute['size'] = $att->getSource()->getOptionText($p->getData($v));
+                            if (!empty($attribute['size'])) {
+                                break;
+                            }
                         }
                     }
 
@@ -289,13 +295,13 @@ class Mktr_Tracker_Model_Pages_Feed
                 }
             }
         }
-
+        /* $product->isInStock() */
         /** @noinspection DuplicatedCode */
         if ($MasterQty < 0) {
             $stock = self::getHelp()->getConfig->getDefaultStock();
-        } else if ($product->isInStock() && $MasterQty == 0) {
+        } else if ($product->getStockItem()->getIsInStock() && $MasterQty == 0) {
             $stock = 2;
-        } else if ($product->isInStock()){
+        } else if ($product->getStockItem()->getIsInStock()){
             $stock = 1;
         } else {
             $stock = 0;
