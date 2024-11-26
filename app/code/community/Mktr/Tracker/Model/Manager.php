@@ -34,8 +34,7 @@ class Mktr_Tracker_Model_Manager
         "__sm__initiate_checkout" => "Checkout",
         "__sm__order" => "saveOrder",
         "__sm__search" => "Search",
-        "__sm__set_email" => "setEmail",
-        "__sm__set_phone" => "setPhone"
+        "__sm__set_email" => "setEmail"
     );
 
     private static $eventsSchema = array(
@@ -57,10 +56,6 @@ class Mktr_Tracker_Model_Manager
 
         "Search" => array(
             "search_term" => "search_term"
-        ),
-
-        "setPhone" => array(
-            "phone" => "phone"
         ),
 
         "addToWishlist" => array(
@@ -138,7 +133,8 @@ class Mktr_Tracker_Model_Manager
         "setEmail" => array(
             "email_address" => "email_address",
             "firstname" => "firstname",
-            "lastname" => "lastname"
+            "lastname" => "lastname",
+            "phone" => "phone"
         )
     );
 

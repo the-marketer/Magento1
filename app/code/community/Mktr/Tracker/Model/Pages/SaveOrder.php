@@ -57,12 +57,6 @@ class Mktr_Tracker_Model_Pages_SaveOrder
                         )
                     );
                 }
-
-                if (!empty($sOrder["phone"]))
-                {
-                    $fNameS = "set".self::getHelp()->getSessionName.'setPhone';
-                    self::getHelp()->getSession->{$fNameS}(array('phone' => $sOrder["phone"]));
-                }
             }
             if (self::getHelp()->getApi->getStatus() == 200)
             {

@@ -70,8 +70,7 @@ importScripts("https://t.themarketer.com/firebase.js");';
         "addToWishlist"=>array(false, "__sm__add_to_wishlist"),
         "removeFromWishlist"=>array(false, "__sm__remove_from_wishlist"),
         "saveOrder"=>array(true, "__sm__order"),
-        "setEmail"=>array(true, "__sm__set_email"),
-        "setPhone"=>array(false, "__sm__set_phone")
+        "setEmail"=>array(true, "__sm__set_email")
     );
 
     private static $discountRules = array(

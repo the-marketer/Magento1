@@ -95,6 +95,7 @@ class Mktr_Tracker_Model_Pages_SetEmail
 
                 if (self::getHelp()->getApi->getStatus() == 200)
                 {
+                    /* TODO setPhone */
                     $fNameP = self::getHelp()->getSessionName.'setPhone';
                     if (self::getHelp()->getSession->{"get".$fNameP}()) {
                         self::getHelp()->getSession->{"uns".$fNameP}();
@@ -114,6 +115,7 @@ class Mktr_Tracker_Model_Pages_SetEmail
 
             self::getHelp()->getSession->{"uns".$tApi}();
         } else {
+            /* TODO setPhone */
             $fNameP = self::getHelp()->getSessionName . 'setPhone';
 
             if (self::getHelp()->getSession->{"get".$fNameP}()) {

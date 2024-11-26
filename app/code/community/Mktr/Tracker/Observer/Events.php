@@ -248,19 +248,7 @@ class Mktr_Tracker_Observer_Events
                 }
             }
 
-            $this->EmailSet($object);
-
-            if ($object->getDefaultShipping()) {
-                self::$eventName = "setPhone";
-
-                $customerAddress = self::getHelp()->getCustomerAddress->load($object->getDefaultShipping());
-
-                self::$eventData = array(
-                    'phone' => self::getHelp()->getFunc->validateTelephone($customerAddress->getTelephone())
-                );
-
-                self::MktrSessionSet();
-            }
+            $this->EmailSet($object);            
         }
     }
     /** @noinspection PhpUnused */
@@ -273,17 +261,6 @@ class Mktr_Tracker_Observer_Events
         $customer = self::$observer->getCustomer();
 
         $this->EmailSet($customer);
-
-        if ($customer->getDefaultShipping()) {
-            self::$eventName = "setPhone";
-            $address = self::getHelp()->getCustomerAddress->load($customer->getDefaultShipping());
-
-            self::$eventData = array(
-                'phone' => self::getHelp()->getFunc->validateTelephone($address->getTelephone())
-            );
-
-            self::MktrSessionSet();
-        }
     }
 
     /** @noinspection PhpUnused */
@@ -292,17 +269,6 @@ class Mktr_Tracker_Observer_Events
         $customer = self::$observer->getCustomer();
 
         $this->EmailSet($customer);
-
-        if ($customer->getDefaultShipping()) {
-            self::$eventName = "setPhone";
-            $address = self::getHelp()->getCustomerAddress->load($customer->getDefaultShipping());
-
-            self::$eventData = array(
-                'phone' => self::getHelp()->getFunc->validateTelephone($address->getTelephone())
-            );
-
-            self::MktrSessionSet();
-        }
     }
 
     public function EmailSet($object)
@@ -320,6 +286,12 @@ class Mktr_Tracker_Observer_Events
         if ($lName) {
             $emailData['lastname'] = $lName;
         }
+        
+        if ($object->getDefaultShipping()) {
+            $customerAddress = self::getHelp()->getCustomerAddress->load($object->getDefaultShipping());
+            $emailData['phone'] = self::getHelp()->getFunc->validateTelephone($customerAddress->getTelephone());
+        }
+
         self::$eventName = "setEmail";
 
         self::$eventData = $emailData;

@@ -107,8 +107,10 @@ class Mktr_Tracker_Block_Loader extends Mage_Core_Block_Template
         {
             $lines[] = '(function(){ let add = document.createElement("script"); add.async = true; add.src = "'.$baseURL.'mktr/api/'.$k.'"; let s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(add,s); })();';
         }
-
-        $lines[] = 'window.MktrDebug = function () { if (typeof dataLayer != undefined) { for (let i of dataLayer) { console.log("Mktr","Google",i); } } };';
+        $lines[] = 'window.mktr = window.mktr || {};';
+        $lines[] = 'window.dataLayer = window.dataLayer || [];';
+        $lines[] = 'window.mktr.MKTR_VERSION = "1.6";';
+        $lines[] = 'window.mktr.debug = function () { if (typeof dataLayer != undefined) { for (let i of dataLayer) { console.log("Mktr","Google",i); } } };';
 
         // $lines[] = 'console.log("Mktr","ActionName","'.self::actionName().'");';
 
