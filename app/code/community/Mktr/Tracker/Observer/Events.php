@@ -29,7 +29,9 @@ class Mktr_Tracker_Observer_Events
         "customer_login" => "RegisterOrLogIn",
         /* "review_controller_product_init_after" => "Review", */
         "admin_system_config_changed_section_mktr_tracker" => "SaveButton",
-        "sales_order_save_after" => "UpdateOrder"
+        "sales_order_save_after" => "UpdateOrder",
+        "catalog_controller_product_view" => "addToCartAndCheckout",
+        "controller_action_predispatch_checkout_cart_index" => "applyDiscountCode"
     );
 
     private static $ins = array(
@@ -325,6 +327,87 @@ class Mktr_Tracker_Observer_Events
         );
 
         self::getHelp()->getApi->send("update_order_status", $send, false);
+    }
+
+    /** @noinspection PhpUnused */
+    /** @noinspection PhpUndefinedClassInspection */
+    public function addToCartAndCheckout()
+    {
+        $request = Mage::app()->getRequest();
+        $addToCart = $request->getParam('mktrAddCart', 0);
+        $productId = $request->getParam('mktrPID', null);
+
+        if ($addToCart != 1 || empty($productId)) {
+            return;
+        }
+
+        $redirectUrl = Mage::getUrl('checkout/cart');
+        $session = Mage::getSingleton('checkout/session');
+
+        $product = Mage::getModel('catalog/product')->load($productId);
+
+        if ($product && $product->getId()) {
+            try {
+                $cart = Mage::getSingleton('checkout/cart');
+                $cart->addProduct($product, array('qty' => 1));
+                $cart->save();
+
+                $session->setCartWasUpdated(true);
+            } catch (Exception $e) {
+                $session->addError($e->getMessage());
+            }
+        } else {
+            $session->addError('Invalid product.');
+        }
+
+        Mage::app()->getResponse()->setRedirect($redirectUrl);
+    }
+
+    /** @noinspection PhpUnused */
+    /** @noinspection PhpUndefinedClassInspection */
+    public function applyDiscountCode()
+    {
+        $request = Mage::app()->getRequest();
+        $response = Mage::app()->getResponse();
+        $session = Mage::getSingleton('checkout/session');
+        $redirectUrl = Mage::getUrl('checkout/cart');
+
+        try {
+            $addDiscount = (int) $request->getParam('mktrAddDiscount', 0);
+            $code = trim((string) $request->getParam('code', ''));
+
+            if ($addDiscount !== 1 || $code === '') {
+                return;
+            }
+
+            $quote = $session->getQuote();
+
+            if (!$quote->hasItems()) {
+                $session->addError(
+                    Mage::helper('checkout')->__('Your cart is empty. Please add products to your cart before applying a discount code.')
+                );
+            } elseif ($quote->getCouponCode()) {
+                $session->addError(
+                    Mage::helper('checkout')->__('A coupon is already applied. Please remove it before applying a new one.')
+                );
+            } else {
+                $quote->setCouponCode($code)->collectTotals()->save();
+
+                if ($quote->getCouponCode() === $code) {
+                    $session->addSuccess(
+                        Mage::helper('checkout')->__('The discount code has been applied successfully.')
+                    );
+                } else {
+                    $session->addError(
+                        Mage::helper('checkout')->__('Invalid discount code.')
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            $session->addError($e->getMessage());
+        }
+
+        $response->setRedirect($redirectUrl);
     }
 
     /** @noinspection PhpReturnValueOfMethodIsNeverUsedInspection */
