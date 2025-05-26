@@ -31,7 +31,7 @@ class Mktr_Tracker_Observer_Events
         "admin_system_config_changed_section_mktr_tracker" => "SaveButton",
         "sales_order_save_after" => "UpdateOrder",
         "catalog_controller_product_view" => "addToCartAndCheckout",
-        "controller_action_predispatch_checkout_cart_index" => "applyDiscountCode"
+        "controller_action_postdispatch_checkout_cart_index" => "applyDiscountCode"
     );
 
     private static $ins = array(
