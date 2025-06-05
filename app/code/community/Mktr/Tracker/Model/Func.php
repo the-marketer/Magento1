@@ -43,7 +43,7 @@ class Mktr_Tracker_Model_Func
     public static function digit2($num)
     {
         // return sprintf('%.2f', (float) $num);
-        return number_format((float) $num, 2, '.', ',');
+        return number_format((float) $num, 2, '.', '');
     }
 
     public static function validateTelephone($phone)
